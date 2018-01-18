@@ -1,8 +1,13 @@
-
-; --------------------------- ;
-; 	    KAPPA FARM BOT        ;
-;        ELE/MES         ;
-; --------------------------- ;
+;----------------------------;
+;                            ;
+;        WRITTEN BY          ;
+;        KENDAL WEN          ;
+;                            ;
+;  FARMS KAPPAS OUTSIDE OF   ;
+;  GYALA HATCHERY FOR DEMON  ;
+;          SHIELDS           ;
+;                            ;
+;----------------------------;
 
 #include-once
 #include "GWA2.au3"

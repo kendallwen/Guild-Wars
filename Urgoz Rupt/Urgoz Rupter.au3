@@ -1,6 +1,17 @@
-; Rupt Snakes in Urgoz
+;----------------------------;
+;                            ;
+;        WRITTEN BY          ;
+;        KENDAL WEN          ;
+;                            ;
+;  INTERUPTS HEALING TOUCH   ;
+;    CASTED BY GUARDIAN      ;
+; SERPENTS AND TWISTED BARKS ;
+;    IN URGOZ'S WARREN       ;
+;                            ;
+;----------------------------;
 
-;#include-once
+
+;include-once
 #include "GWA2.au3"
 #include <GUIConstantsEx.au3>
 #include <ComboConstants.au3>
@@ -14,13 +25,16 @@ Opt("MustDeclareVars", False)
 Opt("GUIOnEventMode",1)
 
 #Region *CONSTANTS*
-Global $boolRun  = False
-Global $rupts = 0
 Global Const $urgoz = 266
 Global Const $wurm = 3753
 Global Const $bark = 3745
 Global Const $dshot = 5
+Global Const $touch = 313
 Global Const $me = -2
+#EndRegion
+
+#Region *VARIABLES*
+Global $boolRUn = False
 #EndRegion
 
 #Region *GUI*
@@ -48,13 +62,12 @@ GUISetState(@SW_SHOW)
 #Region *MAIN*
 
 While Not $boolRun
+   Out1("NOT IN RIGHT PLACE")
    Sleep(100)
 WEnd
 
 While $boolRun
    Local $map = GetMapID()
-   Out1($map)
-   Sleep(1000)
    Local $rightPlace = ($map==$urgoz)
    While($rightPlace)
 	  Out1("Time to start rupting")
@@ -65,7 +78,6 @@ While $boolRun
 		 While Not GetIsDead($agent) And GetDistance($agent, $me) < 320
 			Out1("Not Dead")
 			Sleep(100)
-			$agent = GetAgentById(-1)
 			RuptSkill($agent)
 		 WEnd
 	  EndIf
@@ -74,6 +86,7 @@ While $boolRun
 WEnd
 
 While Not $boolRun
+   Out1("NOT IN RIGHT PLACE")
    Sleep(100)
 WEnd
 
@@ -81,30 +94,31 @@ WEnd
 
 #Region *FUNCTIONS*
 
+; Interupt healing touch casted by guardian serpents and twisted barks
 Func RuptSkill($agent)
-   If GetDistance($agent, $me) > 320 Then Return False
+   If GetDistance($agent, $me) > 180 Then Return False
    Local $char = GetAgentByID()
    Local $weapon = DllStructGetData($char, "WeaponType")
-   If GetSkillbarSkillRecharge($dshot)==0 And $weapon = 1 Then
-	  If GetIsCasting($agent) And Not GetIsCasting(-2) Then
+   If GetSkillbarSkillRecharge($dshot)==0 And $weapon==1 Then
+	  If GetIsCasting($agent)==$touch And Not GetIsCasting($me) Then
 		 UseSkill($dshot, -1)
 		 Out1("Rupted")
-		 $rupts = $rupts + 1
 		 Return True
 	  EndIf
    EndIf
    Return False
 EndFunc
 
+; Find guardian serpents and twisted barks within 180 units of the player
 Func GetWurmAndBark()
    Local $agent, $i
    Local $count = 0
    For $i = 1 to GetMaxAgents()
 	  $agent = GetAgentByID($i)
 	  $model = DllStructGetData($agent, "playernumber")
-	  If GetDistance($i, $me) < 320 And($model==$wurm Or $model == $bark) Then
+	  If GetDistance($i, $me) < 180 And($model==$wurm Or $model == $bark) Then
 		 Out1("Found rupt target")
-		 Sleep(500)
+		 Sleep(100)
 		 ChangeTarget($agent)
 		 Return $agent
 	  EndIf
@@ -117,6 +131,7 @@ EndFunc
 
 #region *UTILITY*
 
+; Launch the bot
 Func Init()
 	$boolRun = Not $boolRun
 	If $boolRun Then
@@ -143,49 +158,13 @@ Func Init()
 	EndIf
 EndFunc
 
-Func GetPos(ByRef $agent,$coord) ; $coord = "X" or "Y"
-	Return DllStructGetData($agent,$coord)
-EndFunc
-
+; Close the bot
 Func Close()
 	Exit
 EndFunc
 
-Func RandomSleep($min,$max)
-	Sleep(Random($min,$max,1))
-EndFunc
-
+; Print text to the GUI
 Func Out1($text)
 	If GUICtrlRead($GUIUpd) <> $text Then GUICtrlSetData($GUIUpd,$text)
 EndFunc
-
-Func UpdTimer()
-	Local $time,$hours,$minutes,$secunds,$temp
-	$time = Int(TimerDiff($timer)/1000)
-	$hours = Int($time/3600)
-	$minutes = Int(($time-($hours*3600))/60)
-	$secunds = Mod(($time-($hours*3600)),60)
-	If $minutes < 10 Then $minutes = "0" & $minutes
-	If $secunds < 10 Then $secunds = "0" & $secunds
-	If $hours < 10 Then $hours = "0" & $hours
-	$temp = "" & $hours & ":" & $minutes & ":" & $secunds
-	GUICtrlSetData($GUITime,$temp)
-EndFunc
-
-Func pingSleep($time = 0)
-	Sleep(GetPing() + $time)
-EndFunc
-
-Func ToggleRendering()
-	$RenderingEnabled = Not $RenderingEnabled
-	If $RenderingEnabled Then
-		EnableRendering()
-		WinSetState(GetWindowHandle(), "", @SW_SHOW)
-	Else
-		DisableRendering()
-		WinSetState(GetWindowHandle(), "", @SW_HIDE)
-		ClearMemory()
-	EndIf
- EndFunc
-
-#endregion
+#EndRegion

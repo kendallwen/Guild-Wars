@@ -1,4 +1,12 @@
-; View modstruct of stuff
+;----------------------------;
+;                            ;
+;        WRITTEN BY          ;
+;        KENDAL WEN          ;
+;                            ;
+;  DETERMINE MODSTRUCTS OF   ;
+;           ITEMS            ;
+;                            ;
+;----------------------------;
 
 ;#include-once
 #include "GWA2.au3"
