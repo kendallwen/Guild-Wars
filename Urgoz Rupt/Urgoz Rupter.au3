@@ -100,8 +100,9 @@ Func RuptSkill($agent)
    Local $char = GetAgentByID()
    Local $weapon = DllStructGetData($char, "WeaponType")
    If GetSkillbarSkillRecharge($dshot)==0 And $weapon==1 Then
-	  If GetIsCasting($agent)==$touch And Not GetIsCasting($me) Then
-		 UseSkill($dshot, -1)
+	  If GetIsCasting($agent) And Not GetIsCasting($me) Then
+		 $target = GetTarget($agent)
+		 UseSkill($dshot, $target)
 		 Out1("Rupted")
 		 Return True
 	  EndIf
