@@ -1,7 +1,7 @@
 ;----------------------------;
 ;                            ;
 ;        WRITTEN BY          ;
-;        KENDAL WEN          ;
+;   KENDAL WEN AND CARROTS   ;
 ;                            ;
 ;  FARMS KAPPAS OUTSIDE OF   ;
 ;  GYALA HATCHERY FOR DEMON  ;
@@ -22,88 +22,92 @@
 Opt("MustDeclareVars", False)
 Opt("GUIOnEventMode",1)
 
-#region *VARS/CSTS*
+#Region *CONSTANTS*
 
-	Global $array[30]
+ Global $array[30]
 
-	Global Const $RARITY_GOLD = 2624
-	Global Const $RARITY_WHITE = 2621
-	Global Const $BAG_SLOT[4] = [20, 5, 10, 10]
+ ; Map IDs
+ Global Const $Gyala_Hatchery = 224
+ Global Const $Maishang_Hills = 199
 
-	Global Const $KappaShell = 850
-	Global Const $boneID = 921
-	Global Const $eyeID = 931
-	Global Const $fangID = 932
-	Global Const $clawID = 923
-	Global Const $lockpickID = 22751
+ Global Const $offset = 1000 ;sleep time
 
-	Global Const $Gyala_Hatchery = 224
-    Global Const $Maishang_Hills = 199
+ ;Bag and storage information
+ Global Const $BAG_SLOT[4] = [20, 5, 10, 10]
+ Global Const $lastStock = 3 ; num of last xunail tab to consider
+ Global Const $lastBag = 3 ; numb of last bag to consider
 
-	Global $ShellCount = 0
-	Global $BoneCount = 0
-	Global $EyeCount = 0
-	Global $Profit = 0
-	Global $Runs = 0
-	Global $Fails = 0
+ ; Item IDs
+ Global Const $KappaShell = 850
+ Global Const $boneID = 921
+ Global Const $eyeID = 931
+ Global Const $fangID = 932
+ Global Const $clawID = 923
+ Global Const $lockpickID = 22751
+ Global Const $salvageKit = 2
+ Global Const $IDKit = 6
+ Global Const $materials[36] = [ _
+	 921, 922, 923, 925, 926, 927, _
+	 928, 929, 930, 931, 932, 933, 934, 935, 936, 937, _
+	 938, 939, 940, 941, 942, 943, 944, 945, 946, 948, _
+	 949, 950, 951, 952, 953, 954, 955, 956, 6532, 6533]
+ Global Const $consumable[38] = [ _
+	 22752, 22269, 28436, 31152, 31151, 31153, 35121, 28433, 26784, _
+	 6370, 21488, 21489, 22191, 24862, 21492, 22644, 30855, 5585, _
+	 24593, 6375, 22190, 6049, 910, 28435, 6369, 21809, 21810, 21813, _
+	 6376, 6368, 29436, 21491, 28434, 21812, 35124, 37765, 22191, 22190]
 
-    ;~ Skill IDs
-	Global Const $SKILL_ID_MANTRA = 8
-	Global Const $SKILL_ID_GLYPH = 198
-	Global Const $SILL_ID_AOE = 165
-	Global Const $SKILL_ID_STONE = 1375
-	Global Const $SKILL_ID_OBBY = 218
-	Global Const $SKILL_ID_ARCHANE_ECHO = 75
-	Global Const $SKILL_ID_WASTREL_WORRY = 50
-    ; found here http://wiki.guildwars.com/wiki/Skill_template_format/Skill_list
+ ;Item Values
+ Global Const $RARITY_GOLD = 2624
+ Global Const $RARITY_WHITE = 2621
 
-; ==== Build ====
-Global Const $SkillBarTemplate = "OgVDI8MJTIAGDlCfVaDLByAulA"
-; declare skill numbers to make the code WAY more readable (UseSkill($sf) is better than UseSkill(2))
-Global Const $mantra = 1
-Global Const $glyphOfElementalPower = 2
-Global Const $armorOfEarth = 3
-Global Const $stoneflesh = 4
-Global Const $obby = 5
-Global Const $echo = 6
-Global Const $wastrels = 7
-Global Const $radField = 8
-; Store skills energy cost
-Global $skillCost[9]
-$skillCost[$mantra] = 10
-$skillCost[$glyphOfElementalPower] = 55
-$skillCost[$armorOfEarth] = 10
-$skillCost[$stoneflesh] = 10
-$skillCost[$obby] = 25
-$skillCost[$echo] = 15
-$skillCost[$wastrels] = 5
-$skillCost[$radField] = 15
+ ; ==== Build ====
+ Global Const $SkillBarTemplate = "OgVDI8MJTIAGDlCfVaDLByAulA"
 
-	Global $boolRun = False
-	Global $RenderingEnabled = True
-	Global $PickUpShells = False
-	Global $SalvageShells = False
-	Global $timer
+ ;~ Skill IDs
+ Global Const $SKILL_ID_MANTRA = 8
+ Global Const $SKILL_ID_GLYPH = 198
+ Global Const $SILL_ID_AOE = 165
+ Global Const $SKILL_ID_STONE = 1375
+ Global Const $SKILL_ID_OBBY = 218
+ Global Const $SKILL_ID_ARCHANE_ECHO = 75
+ Global Const $SKILL_ID_WASTREL_WORRY = 50
+ Global Const $SKILL_ID_RAD_FIELD = 2414
+ ; found here http://wiki.guildwars.com/wiki/Skill_template_format/Skill_list
 
-	Global Const $salvageKit = 2
-	Global Const $IDKit = 6
-	Global Const $offset = 900
+ ; declare skill numbers to make the code WAY more readable (UseSkill($sf) is better than UseSkill(2))
+ Global Const $mantra = 1
+ Global Const $glyphOfElementalPower = 2
+ Global Const $armorOfEarth = 3
+ Global Const $stoneflesh = 4
+ Global Const $obby = 5
+ Global Const $echo = 6
+ Global Const $wastrels = 7
+ Global Const $radField = 8
 
-	Global Const $lastStock = 3 ; num of last xunail tab to consider
-	Global Const $lastBag = 3 ; numb of last bag to consider
+ ; Store skills energy cost
+ Global Const $skillCost[9] = [0, 10, 5, 10, 10, 25, 15, 5, 15]
 
-	Global Const $materials[36] = [ _
-		921, 922, 923, 925, 926, 927, _
-		928, 929, 930, 931, 932, 933, 934, 935, 936, 937, _
-		938, 939, 940, 941, 942, 943, 944, 945, 946, 948, _
-		949, 950, 951, 952, 953, 954, 955, 956, 6532, 6533]
-	Global Const $consumable[38] = [ _
-		22752, 22269, 28436, 31152, 31151, 31153, 35121, 28433, 26784, _
-		6370, 21488, 21489, 22191, 24862, 21492, 22644, 30855, 5585, _
-		24593, 6375, 22190, 6049, 910, 28435, 6369, 21809, 21810, 21813, _
-		6376, 6368, 29436, 21491, 28434, 21812, 35124, 37765, 22191, 22190]
+#EndRegion
 
-#endregion
+#Region *VARIABLES*
+
+ ; Counters
+ Global $ShellCount = 0
+ Global $BoneCount = 0
+ Global $EyeCount = 0
+ Global $Profit = 0
+ Global $Runs = 0
+ Global $Fails = 0
+ Global $timer
+
+ ; Checkboxes
+ Global $boolRun = False
+ Global $RenderingEnabled = True
+ Global $PickUpShells = False
+ Global $SalvageShells = False
+
+#EndREgion
 
 #Region *GUI*
 
@@ -155,7 +159,6 @@ $timer = TimerInit()
 AdlibRegister("UpdTimer",1000)
 
 While $boolRun
-	;If freeSlot() <> 35 Then ManageInventory() ;why do this before? people need pcons and shit. do this after.
 	ResignStart()
 	UpdCounts()
 	While 1
@@ -200,6 +203,7 @@ WEnd
 
 #Region *FUNCTIONS*
 
+; Wait for an outpost or explorable area to fully load
 Func WaitForLoad()
 	Local $load,$lMe,$loadtimer = TimerInit()
 	InitMapLoad()
@@ -219,18 +223,18 @@ Func WaitForLoad()
 	Return True
 EndFunc
 
+; Map travel to Gyala Hatchery if not there already
 Func ResignStart()
 	If GetMapID() <> $Gyala_Hatchery Then
 		Out1("Traveling to Gyala")
 		TravelTo($Gyala_Hatchery)
 	EndIf
 	pingSleep()
-	Out1("Prepare Resign")
-	RndSleep(800)
 	Out1("Ready")
 EndFunc
 
-Func EnterArea() ;zone into explorable
+; Zone into Maishang Hills
+Func EnterArea()
    Out1("Exiting Gyala")
 	MoveTo(687, 23241)
 	Do
@@ -240,17 +244,19 @@ Func EnterArea() ;zone into explorable
 	PingSleep(500)
 EndFunc
 
-Func LeaveArea() ;zone back into outpost
+; Map travel to Gyala Hatchery
+Func LeaveArea()
 	Do
 		Sleep(10)
 	Until Move(779, 1145)
 	WaitForLoad()
 EndFunc
 
+; Farm the kappas in Gyala Hatchery. Return 0 if successful run, 1 if lacking inventory space,
+; and 2 if the player died during the run
 Func Farm() ; 0 = done / 1 = no free slots / 2 = dead
 	If Not $RenderingEnabled Then ClearMemory()
 	SwitchMode(1) ;HM for dat gold chance
-
 	RndSleep(200)
 	If Not RunToSpot() Then Return 2
 	Out1("Pick-Up loots")
@@ -265,15 +271,13 @@ Func Farm() ; 0 = done / 1 = no free slots / 2 = dead
 	Return 0
 EndFunc
 
+; Move to the initial farming spot. Return true if run was successful and false if player died
 Func RunToSpot() ; false = dead
-	Out1("Leaving OutPost")
-	RndSleep(800)
 	EnterArea()
 	PingSleep(1000)
 	If GetIsDead(-2) Then Return False
-	MoveTo(16876, -9483) ;in position for first 2 groups
+	MoveTo(16876, -9483)
 	TargetNearestEnemy()
-
 	BallingGroups()
 	If GetIsDead(-2) Then Return False
 	Local $killtimer = timerinit()
@@ -281,26 +285,17 @@ Func RunToSpot() ; false = dead
 		StayAlive()
 		Kill()
 	 Until GetIsDead(-2) or IsEverythingDead() or TimerDiff($killtimer) > 120000
-	Return True
+	If IsEverythingDead() Return True
+	Return False
  EndFunc
 
-;~ Description: Wait and stay alive at the same time (like Sleep(..), but without the letting yourself die part)
-Func WaitFor($lMs)
-	If GetIsDead(-2) Then Return
-	Local $lTimer = TimerInit()
-	While TimerDiff($lTimer) < $lMs
-		Sleep(50)
-		If GetIsDead(-2) Then Return
-		If GetMapID() <> $Maishang_Hills Then Return
-		StayAlive()
-	WEnd
-EndFunc
-
+; Move around Maishang Hills to ball 3 kappa groups. Return false if the player dies.
 Func BallingGroups()
 	If GetIsDead(-2) Then Return False
 	Out1("Str8 Ballin")
 	TargetNearestEnemy()
 	While GetDistance() >1600
+		TargetNearestEnemy()
 		sleep(100)
 	WEnd
 	UseSkillEx($mantra)
@@ -308,17 +303,16 @@ Func BallingGroups()
 	UseSkillEx($armorOfEarth)
 	UseSkillEx($stoneflesh)
     If GetIsDead(-2) Then Return False
-
 	While GetNumberOfFoesInRangeOfAgent(-2, 1000) < 7
-		 Sleep(50)
+		 Sleep(100)
 		 StayAlive()
 		 If GetIsDead(-2) Then Return False
 	WEnd
-	TargetNearestEnemy()
 	MoveAggroing(19476, -12338) ;get far group
+	If GetIsDead(-2) Then Return False
     Local $ballTimer = timerinit()
 	While Not(GetNumberOfFoesInRangeOfAgent(-2, 1000) > 10 Or TimerDiff($ballTimer) > 30000)
-		 Sleep(50)
+		 Sleep(100)
 		 StayAlive()
 		 If GetIsDead(-2) Then Return False
 	 WEnd
@@ -331,7 +325,8 @@ Func BallingGroups()
 	If GetIsDead(-2) Then Return False
 EndFunc
 
- Func Kill() ;pew pew pew pew pew pe wp ewp ew pe wpew p ewp ewp ew
+; Kill kappas.
+Func Kill() ;pew pew pew pew pew pe wp ewp ew pe wpew p ewp ewp ew
  Out1("Death to Twitch memes")
 
 	StayAlive()
@@ -382,6 +377,7 @@ EndFunc
 	EndIf
 EndFunc
 
+; Determine if enough kappas have died.
 Func IsEverythingDead()
 	If GetNumberOfFoesInRangeOfAgent(-2, 300) > 2 Then
 		Return False
@@ -410,6 +406,7 @@ Func MoveAggroing($lDestX, $lDestY, $lRandom = 150)
 	Return True
 EndFunc
 
+; Stay alive
 Func StayAlive()
 	If GetMapID() <> $Maishang_Hills Then Return
 	If GetIsDead(-2) Then Return
@@ -420,8 +417,9 @@ Func StayAlive()
 	Return
  EndFunc
 
+; Use enchantments to stay alive if stoneflesh has almost run out and skills are recharged.
  Func UseEnchants()
-	If GetEffectTimeRemaining($SKILL_ID_STONE) < 7000 And GetEffectTimeRemaining($SKILL_ID_GLYPH) < 20000 Then
+	If GetEffectTimeRemaining($SKILL_ID_STONE) < 7000 Then
 	   UseSKillEx($glyphOfElementalPower)
 	   UseSkillEx($armorOfEarth)
 	   UseSkillEx($stoneflesh)
@@ -435,9 +433,9 @@ Func IsRecharged($lSkill)
 	Else
 		Return False
 	EndIf
-	;Return GetSkillBarSkillRecharge($lSkill)==0 ; $lskill not declared...
 EndFunc
 
+; Resign in Maishang Hills and map travel back to Gyala Hatchery when dead or the run is finished
 Func Resign2()
 	Local $timerResign = TimerInit()
 	Out1("Resign")
@@ -456,6 +454,7 @@ Func Resign2()
 	Return True
 EndFunc
 
+; Use a skill taking into effect the amount of time it takes to cast
 Func UseSkillEx($aSkillSlot, $aTarget = -2) ; false = dead
 	Local $tDeadlock = TimerInit()
 	USESKILL($aSkillSlot, $aTarget)
@@ -466,6 +465,7 @@ Func UseSkillEx($aSkillSlot, $aTarget = -2) ; false = dead
 	Return True
 EndFunc
 
+; Determine the number of enemies within a certain range of an agent
 Func GetNumberOfFoesInRangeOfAgent($aAgent = -2, $aRange = 1250)
 	Local $lAgent, $lCount = 0
 	For $i = 1 To GetMaxAgents()
@@ -485,21 +485,20 @@ EndFunc
 
 #Region *PICK-UP*
 
-
+; pick up drops
 Func PickUpLoot() ; 0 = dead / 1 = no free slots / 2 = done
 	Local $i, $count = 0
-	Local $numb = NumbOfItems()
-	If $numb = 0 Then Return 2
-	For $i = 1 To $numb
+	For $i = 1 To GetMaxAgents()
 		If GetIsDead(-2) Then Return 0
 		If freeSlot() = 3 Then Return 1
-		Pick($array[$i-1])
+		If IsItem($i) Then Pick($i)
 		pingSleep()
 		If freeSlot() = 3 Then Return 1
 	Next
 	Return 2
 EndFunc
 
+; pick up an item
 Func Pick($agentID)
 	Local $lMe, $lBlockedTimer, $lBlockedCount = 0, $lItemExists = True
 	Local $item = GetItemByAgentID($agentID)
@@ -523,20 +522,16 @@ Func Pick($agentID)
 	If Not $lItemExists Then Updcounts2(DllStructGetData($item,"ModelID"),DllStructGetData($item,"Quantity"))
 EndFunc
 
-Func NumbOfItems()
-	Local $lAgent, $i, $count = 0
-	For $i = 1 To GetMaxAgents()
-		If GetSkillBarSkillRecharge(2) = 0 Then UseSkillEx(2,-2)
-		$lAgent = GetAgentByID($i)
-		If GetDistance($lAgent) > 1300 Then ContinueLoop ;500 -> 1200 because you aren't on top of them. This shit isn't dragon moss.
-		If Not GetIsMovable($lAgent) Then ContinueLoop
-		If Not GetCanPickUp($lAgent) Then ContinueLoop
-		$count += 1
-		$array[$count-1] = $i
-	Next
-	Return $count
+; Determine if an agent is an item that the player can pick up
+Func IsItem($agentdID))
+	 $lAgent = GetAgentByID($agentID)
+	 If GetDistance($lAgent) > 1300 Then Return False
+	 If Not GetIsMovable($lAgent) Then Return False
+	 If Not GetCanPickUp($lAgent) Then Return False
+     Return True
 EndFunc
 
+; Determine if an item drop is worth picking up or not
 Func CanPickUp($aItem)
 	Local $i,$e = DllStructGetData($aItem, 'ExtraID')
 	Local $m = DllStructGetData(($aItem), 'ModelID')
@@ -564,8 +559,7 @@ EndFunc
 
 #region *INVENTORY*
 
-; ----------------------------------- ;
-
+; Manage inventory when full in Dragon's Throat
 Func ManageInventory()
 	If GetMapID() <> 274 Then
 		Out1("Travelling to Dragon's Throat")
@@ -591,8 +585,7 @@ Func ManageInventory()
 	UpdCounts()
 EndFunc
 
-; ----------------------------------- ;
-
+; Move to a destination while in an outpost
 Func OPMove($lDestX, $lDestY, $lRandom = 150)
 	Local $lMe, $lBlocked, $lAngle, $ChatStuckTimer = TimerInit(), $stuckTimer = TimerInit()
 	Move($lDestX, $lDestY, $lRandom)
@@ -620,6 +613,7 @@ Func OPMove($lDestX, $lDestY, $lRandom = 150)
 	Return True
 EndFunc
 
+; Move to the xunlai chest
 Func GoToXunlai()
 	Local $xunlai = GetNearestAgentToCoords(-10824,6352)
 	Out1("Go to Xunlai")
@@ -629,6 +623,7 @@ Func GoToXunlai()
 	PingSleep(500)
 EndFunc
 
+; Move to the merchant
 Func GoToMerch()
 	Local $merch = GetNearestAgentToCoords(-10714,6915)
 	Out1("Go to Merch")
@@ -638,11 +633,13 @@ Func GoToMerch()
 	PingSleep(500)
 EndFunc
 
+; Talk to the merchant
 Func TalkToMerch()
 	Local $merch = GetNearestAgentToCoords(-10714,6915)
 	GoNPC($merch)
 EndFunc
 
+; Determine how many empty slots are left in the inventory
 Func freeSlot()
 Local $i, $j, $count = 0
 	For $i = 1 To 3
@@ -653,6 +650,7 @@ Local $i, $j, $count = 0
 Return $count
 EndFunc
 
+; Buy identification and salvage kits when necessary
 Func ManageKits()
 	Local $IDKitnumb, $SalvKitnumb
 	Local $lMe = GetAgentByID(-2)
@@ -674,6 +672,7 @@ EndFunc
 
 #Region *SALVAGE*
 
+; Buy a salvage kit
 Func buySalvageKit($quantity) ; return false in case of no gold
 	If freeSlot() < $quantity Then Return False
 	Local $price, $i, $gold
@@ -707,10 +706,12 @@ Func buySalvageKit($quantity) ; return false in case of no gold
 	Return True
 EndFunc
 
+; Determine how many uses a salvage kit has left
 Func CheckSalvageKit()
 	Return CountItem(2992)
 EndFunc
 
+; Salvage an item
 Func salvage() ; return false if freeslot <= 1
     If Not $SalvageShells Then Return False
 	If freeSlot() <= 2 Then Return False
@@ -741,6 +742,7 @@ Func salvage() ; return false if freeslot <= 1
 	Return True
 EndFunc
 
+; Determine if an item should be salvaged
 Func canSalvage($item)
 	Local $i,$m = DllStructGetData($item, 'ModelID')
 	Local $t = DllStructGetData($item,"Type")
@@ -748,6 +750,7 @@ Func canSalvage($item)
 	Return False
 EndFunc
 
+; Start salvaging items with a normal salvage kit
 Func startNormSalvage($aItem)
 	Local $lItemID, $lOffset[4] = [0, 0x18, 0x2C, 0x62C]
 	Local $lSalvageKit, $lSalvageSessionID = MemoryReadPtr($mBasePointer, $lOffset)
@@ -768,6 +771,7 @@ Func startNormSalvage($aItem)
 	Enqueue($mSalvagePtr, 16)
 EndFunc
 
+; find normal salvage kits in a player's inventory
 Func findNormSalvageKit()
 	Local $i,$j
 	Local $lItem
@@ -804,6 +808,7 @@ EndFunc
 
 #Region *IDENTIFY*
 
+; Buy identification kits
 Func lbuyIDKit($quantity) ; return false in case of no gold
 	If freeSlot() < $quantity Then Return False
 	Local $price = 500, $i, $gold
@@ -832,10 +837,12 @@ Func lbuyIDKit($quantity) ; return false in case of no gold
 	Return True
 EndFunc
 
+; Determine how many uses an identification kit has
 Func CheckIDKit()
 	Return CountItem(5899)
 EndFunc
 
+; Determine if an item should be identified
 Func canIdentify($item)
 	Local $m = DllStructGetData($item,"ModelID")
 	Local $t = DllStructGetData($item,"Type")
@@ -846,6 +853,7 @@ Func canIdentify($item)
 	Return False
 EndFunc
 
+; Identify all items in the inventory
 Func lIdentify()
 	Local $i,$j
 	Out1("Identifying")
@@ -866,6 +874,7 @@ EndFunc
 
 #Region *STOCKAGE*
 
+; Determine what the next empty slot is in the xunlai chest
 Func NextXunlaiFreeSlot()
 Local $arrayslot[2], $i, $j
 	For $i = 8 To $lastStock+7
@@ -880,6 +889,7 @@ Local $arrayslot[2], $i, $j
 Return $arrayslot
 EndFunc
 
+; Determine if an item should be stored
 Func GetIsStockable(ByRef Const $item)
 	Local $i, $m = DllStructGetData($item, 'ModelID')
 	Local $t = DllStructGetData($item,"Type")
@@ -898,6 +908,7 @@ Func GetIsStockable(ByRef Const $item)
 	Return False
  EndFunc
 
+; Determine if an item is a valuable old school shield
 Func IsGoodOsShield(ByRef Const $item)
  Local $r = GetRarirty($item)
  local $t = DllStructGetData($item, "Type")
@@ -930,12 +941,14 @@ Func IsGoodOsShield(ByRef Const $item)
  Return False
  EndFunc
 
+; Determine if a weapon has an inherent vampiric effect
  Func IsDualVamp(ByRef Const $item)
 	Local $modStruct = GetModStruct($item)
 	If StringinStr($modStruct, "0100E820") Then Return True
 	Return False
  EndFunc
 
+; Find all slots that items can be stored in
 Func FindSlotToStorage(ByRef Const $item)
 	Local $i,$j,$xunlaitem,$xunlaitemID,$arrayslot[2],$modelID = DllStructGetData($item,'ModelID')
 	For $i = 8 To $lastStock + 7
@@ -955,6 +968,7 @@ Func FindSlotToStorage(ByRef Const $item)
 	Return $arrayslot
 EndFunc
 
+; Sotre an item in the chest
 Func StorageItem($item) ; return false in case of full chest
 	If IsChestFull() Then Return False
 	Local $arrayslot[2] = [0,0]
@@ -964,6 +978,7 @@ Func StorageItem($item) ; return false in case of full chest
 	Return True
 EndFunc
 
+; Process the inventory and store items that should be stored
 Func Storage() ; return false in case of full chest
 	Local $i,$j,$item
 	Out1("Stocking")
@@ -979,6 +994,7 @@ Func Storage() ; return false in case of full chest
 	Return True
 EndFunc
 
+; Determine if the xunlai chest is full
 Func IsChestFull()
 	Local $i,$j,$c = 0
 	For $i = 8 To $lastStock + 7
@@ -993,6 +1009,7 @@ EndFunc
 
 #Region *SELL*
 
+; Sell all items in the inventory
 Func sellInventory()
 	Local $i,$j,$count = 0
 	Out1("Selling")
@@ -1010,6 +1027,7 @@ Func sellInventory()
 	$Profit += $count
 EndFunc
 
+; Determine if an item should be sold
 Func canSell($item)
 	Local $i,$m = DllStructGetData($item,"ModelID")
 	Local $t = DllStructGetData($item,"Type")
@@ -1023,6 +1041,7 @@ EndFunc
 
 #region *UTILITY*
 
+; Begin the run upon pressing the start button
 Func Init()
 	$boolRun = Not $boolRun
 	If $boolRun Then
@@ -1049,18 +1068,22 @@ Func Init()
 	EndIf
 EndFunc
 
+; Determine an agents position
 Func GetPos(ByRef $agent,$coord) ; $coord = "X" or "Y"
 	Return DllStructGetData($agent,$coord)
 EndFunc
 
+; Close the window and exit the bot
 Func Close()
 	Exit
 EndFunc
 
+; Sleep for a random amount of time
 Func RandomSleep($min,$max)
 	Sleep(Random($min,$max,1))
 EndFunc
 
+; Count the number of items of a certain type
 Func CountItem($itemID)
 	Local $i,$j,$item,$count = 0
 	For $i = 1 To $lastBag
@@ -1074,6 +1097,7 @@ Func CountItem($itemID)
 	Return $count
 EndFunc
 
+; Update the GUI variables with the number of drops of certain types
 Func Updcounts2($itemID, $quantity)
 	Switch $itemID
 	  Case $KappaShell
@@ -1085,6 +1109,7 @@ Func Updcounts2($itemID, $quantity)
 	EndSwitch
 EndFunc
 
+; Upate the GUI with the number of drops of a certain type
 Func UpdCounts()
 	GUICtrlSetData($GUIgolds, $Profit)
 	GUICtrlSetData($GUIshells, $ShellCount)
@@ -1094,10 +1119,12 @@ Func UpdCounts()
 	GUICtrlSetData($GUIfails, $Fails)
 EndFunc
 
+; Print a string to the GUI
 Func Out1($text)
 	If GUICtrlRead($GUIUpd) <> $text Then GUICtrlSetData($GUIUpd,$text)
 EndFunc
 
+; Update the GUI with the time that the bot has been running
 Func UpdTimer()
 	Local $time,$hours,$minutes,$secunds,$temp
 	$time = Int(TimerDiff($timer)/1000)
@@ -1111,10 +1138,12 @@ Func UpdTimer()
 	GUICtrlSetData($GUITime,$temp)
 EndFunc
 
+; Sleep for a time equal to the player's ping
 Func pingSleep($time = 0)
 	Sleep(GetPing() + $time)
 EndFunc
 
+; Toggle graphical rendering of the game
 Func ToggleRendering()
 	$RenderingEnabled = Not $RenderingEnabled
 	If $RenderingEnabled Then
@@ -1127,6 +1156,7 @@ Func ToggleRendering()
 	EndIf
  EndFunc
 
+; Toggle items to be picked up
  Func TogglePickUp()
 	$PickUpShells = Not $PickUpShells
 	If $PickUpShells Then
@@ -1136,6 +1166,7 @@ Func ToggleRendering()
 	EndIf
  EndFunc
 
+; Toggle items to be salvaged
  Func ToggleSalvage()
 	$SalvageShells = Not $SalvageShells
  EndFunc
