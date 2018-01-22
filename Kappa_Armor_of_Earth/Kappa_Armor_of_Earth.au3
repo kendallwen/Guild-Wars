@@ -24,8 +24,6 @@ Opt("GUIOnEventMode",1)
 
 #Region *CONSTANTS*
 
- Global $array[30]
-
  ; Map IDs
  Global Const $Gyala_Hatchery = 224
  Global Const $Maishang_Hills = 199
