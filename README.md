@@ -2,7 +2,7 @@
 Applications to modify the MMORPG Guild Wars
 
 # Kappa_Armor_of_Earth
-example of the bot in action: https://youtu.be/J50DNXyqWcI
+example of the bot in action: https://youtu.be/J50DNXyqWcI __
 The bot requires at least a +4 Earth Magic head piece, a +10 vs cold damage offhand and weapon with an enchantment last 20% longer modification. The skill template can is OgVDI8MJTIAGDlCfVaDLByAulA
 
 # Memory Structures
